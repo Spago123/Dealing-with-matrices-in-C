@@ -2,11 +2,21 @@
 #define MATRIX_H
 
 struct Matrix{
-    int columns, rows;
+    int rows, columns;
     double **mat;
 };
 
 typedef struct Matrix Matrix;
+
+struct ConcatAndCopy{
+    int startHorizontally, startVertically;
+    Matrix* dest;
+    Matrix* origin;
+};
+
+typedef struct ConcatAndCopy ConcatAndCopy;
+
+void* fillMatrix(void* concatAndCopy);
 
 /*
     * Function that creates a matrix
@@ -46,6 +56,23 @@ double getValue(Matrix *matrix, int row, int col);
     * Get pointer to element, using this you can modify the value
 */
 double* getElement(Matrix* matrix, int row, int col);
+/*
+    * Function that concats two matrices horizontally
+    * number of columns must be the same for both matrices
+*/
+Matrix conHorizontally(Matrix* mat1, Matrix* mat2);
+/*
+    * Function that conctats two matrices vertically
+    * number of rows must be the same for both matrices
+*/
+Matrix conVertically(Matrix* mat1, Matrix* mat2);
+
+/*
+    * Function that makes a deep copy of a matrix
+*/
+Matrix copy(Matrix* matrix);
+
+
 
 
 #endif
