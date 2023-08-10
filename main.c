@@ -26,9 +26,30 @@ int main(){
     printf("Mat2\n");
     print_matrix(&mat2);
     mat3 = conVertically(&mat1, &mat2);
-    printf("Mat6\n");
+    printf("Mat3\n");
     print_matrix(&mat3);
     free_matrix(mat1);
     free_matrix(mat2);
     free_matrix(mat3);
+
+
+    printf("Testing subMatrix\n");
+    mat1 = create_matrix(4, 4);
+    *(getElement(&mat1, 2, 2)) = -3.5;
+    print_matrix(&mat1);
+    printf("After subMatrix\n");
+    mat2 = subMatrix(&mat1, 1, 2, 1, 4);
+    print_matrix(&mat2);
+    free_matrix(mat1);
+    free_matrix(mat2);
+
+    double arr[] = {1, 2, 3, 4};
+    mat1 = arr2mat(arr, arr + 4);
+    mat2 = diag(arr, arr + 4);
+    printf("arr2mat\n");
+    print_matrix(&mat1);
+    printf("diag\n");
+    print_matrix(&mat2);
+    free_matrix(mat1);
+    free_matrix(mat2);
 }

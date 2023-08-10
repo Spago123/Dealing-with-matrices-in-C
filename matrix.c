@@ -108,3 +108,32 @@ void* fillMatrix(void* concatAndCopy){
     }
 }
 
+Matrix subMatrix(Matrix* matrix, int rowBegin, int rowEnd, int colBegin, int colEnd){
+    rowBegin--, rowEnd--, colBegin--, colEnd--; 
+    Matrix sub = create_matrix(rowEnd - rowBegin + 1, colEnd - colBegin + 1);
+    int i, j;
+    for(i = rowBegin; i <= rowEnd; i++){
+        for(j = colBegin; j <= colEnd; j++){
+            sub.mat[i - rowBegin][j - colBegin] = matrix->mat[i][j];
+        }
+    } 
+    return sub;
+}
+
+Matrix arr2mat(double* begin, double* end){
+    Matrix matrix = create_matrix(end - begin, 1);
+    double* help = begin;
+    for(; help < end; help++){
+        matrix.mat[help - begin][0] = *help;
+    }
+    return matrix;
+}
+
+Matrix diag(double* begin, double* end){
+    Matrix matrix = create_matrix(end - begin, end - begin);
+    double* help = begin;
+    for(; help < end; help++){
+        matrix.mat[help - begin][help - begin] = *help;
+    }
+    return matrix;
+}

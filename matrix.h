@@ -72,6 +72,32 @@ Matrix conVertically(Matrix* mat1, Matrix* mat2);
 */
 Matrix copy(Matrix* matrix);
 
+/*
+    * Function that makes a submatrix of a matrix
+*/
+
+Matrix subMatrix(Matrix* matrix, int horBegin, int verBegin, int horEnd, int verEnd);
+
+/*
+    * Function that makes a vector out of an array
+*/
+Matrix arr2mat(double* begin, double* end);
+
+/*
+    * Function that generates a diagobal matrix with elements on the diagonal that 
+    * are equal to the element of the array
+*/
+Matrix diag(double* begin, double* end);
+
+/*
+    * Function that sums two matrices   
+*/
+Matrix sumMatrix(Matrix* mat1, Matrix* mat2);
+
+/*
+    * Function that multiplies two matrices
+*/
+Matrix multiplyMatrix(Matrix* mat1, Matrix* mat2);
 
 
 
