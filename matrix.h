@@ -99,6 +99,19 @@ Matrix sumMatrix(Matrix* mat1, Matrix* mat2);
 */
 Matrix multiplyMatrix(Matrix* mat1, Matrix* mat2);
 
+/*
+    * Function that returns the determinant of a matrix
+*/
+double det(Matrix* matrix);
 
+/*
+    * Function that returns if a matrix is singular or not
+*/
+int singularity(Matrix* matrix);
+
+/*
+    * Function that return the inverse of a matrix
+*/
+Matrix inv(Matrix* matrix);
 
 #endif
