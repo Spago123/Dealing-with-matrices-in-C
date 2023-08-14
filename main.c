@@ -52,4 +52,18 @@ int main(){
     print_matrix(&mat2);
     free_matrix(mat1);
     free_matrix(mat2);
+
+    printf("Testing sum and multiply functions:\n");
+    double arr1[] = {4, 5, 6, 7, 10, 10, 10, 10};
+    double arr2[] = {8, 9, 10, 11, -5, 45, 65, 80};
+    mat1 = diag(arr1, arr1 + 8);
+    mat2 = diag(arr2, arr2 + 8);
+    printf("Sum function:\n");
+    mat3 = sumMatrix(&mat1, &mat2);
+    print_matrix(&mat3);
+    free_matrix(mat3);
+    printf("Multiply function\n");
+    mat3 = multiplyMatrix(&mat1, &mat2);
+    print_matrix(&mat3);
+    free_matrix(mat3);
 }

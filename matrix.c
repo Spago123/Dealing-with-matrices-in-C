@@ -137,3 +137,27 @@ Matrix diag(double* begin, double* end){
     }
     return matrix;
 }
+
+Matrix sumMatrix(Matrix* mat1, Matrix* mat2){
+    Matrix sum = create_matrix(mat1->rows, mat1->columns);
+    int i, j;
+    for(i = 0; i < sum.rows; i++){
+        for(j = 0; j < sum.columns; j++){
+            sum.mat[i][j] = mat1->mat[i][j] + mat2->mat[i][j];
+        }
+    }
+    return sum;
+}
+
+Matrix multiplyMatrix(Matrix* mat1, Matrix* mat2){
+    Matrix product = create_matrix(mat1->rows, mat2->columns);
+    int i, j, k;
+    for(i = 0; i < mat1->rows; i++){
+        for(j = 0; j < mat2->columns; j++){
+            for(k = 0; k < mat1->rows; k++){
+                product.mat[i][j] += mat1->mat[i][k] * mat2->mat[k][j];
+            }
+        }
+    }
+    return product;
+}
