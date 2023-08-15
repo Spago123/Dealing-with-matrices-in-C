@@ -14,6 +14,7 @@ struct ConcatAndCopy{
     Matrix* origin;
 };
 
+
 typedef struct ConcatAndCopy ConcatAndCopy;
 
 void* fillMatrix(void* concatAndCopy);
@@ -106,6 +107,7 @@ double det(Matrix* matrix);
 
 /*
     * Function that returns if a matrix is singular or not
+    * return 1 for singular matrix, 0 for regular matrix
 */
 int singularity(Matrix* matrix);
 
@@ -113,5 +115,20 @@ int singularity(Matrix* matrix);
     * Function that return the inverse of a matrix
 */
 Matrix inv(Matrix* matrix);
+
+/*
+    * Function to modify a rows value
+*/
+void modifyRow(Matrix* matrix, double value, int rowDest, int rowOrig);
+
+/*
+    * Function to modify a columns value
+*/
+void modifyColumn(Matrix* matrix, double value, int columnDest, int columnOrig);
+
+/*
+    * Function that calculates the product of the element on the main diagonal
+*/
+double matrixTrace(Matrix* matrix);
 
 #endif

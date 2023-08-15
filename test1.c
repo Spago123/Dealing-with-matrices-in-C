@@ -8,10 +8,8 @@ int main(){
     *getElement(&mat1, 3, 3) = 4;
     printf("Change\n");
     print_matrix(&mat1);
-    //printf("%d %d %d %d", mat1.rows, mat1.columns, mat2.rows, mat2.columns);
     Matrix mat3 = conHorizontally(&mat1, &mat2);
     printf("After conHorizonatlly %d\n", mat3.rows);
-    //print_matrix(&mat2);
     print_matrix(&mat3);
     free_matrix(mat1);
     free_matrix(mat2);
@@ -66,4 +64,12 @@ int main(){
     mat3 = multiplyMatrix(&mat1, &mat2);
     print_matrix(&mat3);
     free_matrix(mat3);
+
+    printf("Testing modifyRow\n");
+    mat1 = diag(arr1, arr1 + 5);
+    print_matrix(&mat1);
+    printf("After modify\n");
+    modifyRow(&mat1, 1, 5, 1);
+    modifyColumn(&mat1, 1, 5, 1);
+    print_matrix(&mat1);
 }

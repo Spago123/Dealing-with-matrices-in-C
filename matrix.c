@@ -2,6 +2,9 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<pthread.h>
+#include<math.h>
+
+const double EPS = 1e-5;
 
 Matrix create_matrix(int rows, int columns){
     Matrix matrix = {rows, columns, (double**)malloc(sizeof(double*)*rows)};
@@ -160,4 +163,47 @@ Matrix multiplyMatrix(Matrix* mat1, Matrix* mat2){
         }
     }
     return product;
+}
+
+void modifyRow(Matrix* matrix, double value, int rowDest, int rowOrig){
+    int j;
+    rowDest -= 1; rowOrig -= 1;
+    for(j = 0; j < matrix->columns; j++){
+        matrix->mat[rowDest][j] += value * matrix->mat[rowOrig][j];
+    }
+}
+
+void modifyColumn(Matrix* matrix, double value, int columnDest, int columnOrig){
+    int i;
+    columnDest -= 1; columnOrig -= 1;
+    for(i = 0; i < matrix->rows; i++){
+        matrix->mat[i][columnDest] += value * matrix->mat[i][columnOrig];
+    }
+}
+
+double det(Matrix* matrix){
+    Matrix copyMatrix = copy(matrix);
+    int i, j;
+    for(i = 1; i <= matrix->rows;  i++){
+        for(j = i + 1; j <= matrix->rows; j++){
+            modifyRow(&copyMatrix, -copyMatrix.mat[j - 1][i - 1]/copyMatrix.mat[i - 1][i - 1], j, i);
+        }
+    }
+
+    double det = matrixTrace(&copyMatrix);
+    free_matrix(copyMatrix);
+    return det;
+}
+
+
+int singularity(Matrix* matrix){
+    return (abs(det(matrix)) <= EPS) ? 1:0;
+}
+
+double matrixTrace(Matrix* matrix){
+    double trace = 1.;
+    int i;
+    for(i = 0; i < matrix->rows; i++)
+        trace *= matrix->mat[i][i];
+    return trace;
 }
