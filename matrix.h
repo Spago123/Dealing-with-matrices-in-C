@@ -41,10 +41,16 @@ void print_matrix(Matrix* matrix);
     *
 */
 void free_matrix(Matrix matrix);
+
+/*
+    * Function used to type in a matrix from standard user input
+*/
+Matrix inputMatrix(int rows, int columns);
 /*
     * Get number of rows
 */
 int getRows(Matrix *matrix);
+
 /*
     * Get number of columns
 */
@@ -130,5 +136,16 @@ void modifyColumn(Matrix* matrix, double value, int columnDest, int columnOrig);
     * Function that calculates the product of the element on the main diagonal
 */
 double matrixTrace(Matrix* matrix);
+
+/*
+    * Function that swaps two rows of a matrix
+*/
+void swapRows(Matrix* matrix, int row1, int row2);
+
+/*
+    * Funtion that swaps two columns of a matrix
+*/
+void swapColumns(Matrix* matrix, int col1, int col2);
+
 
 #endif

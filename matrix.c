@@ -39,6 +39,17 @@ void free_matrix(Matrix matrix){
     free(matrix.mat);
 }
 
+Matrix inputMatrix(int rows, int columns){
+    Matrix matrix = create_matrix(rows, columns);
+    int i, j;
+    for(i = 1; i <= rows; i++){
+        for(j = 1; j <= columns; j++){
+            scanf("%lf", getElement(&matrix, i, j));
+        }
+    }
+    return matrix;
+}
+
 int getRows(Matrix *matrix){
     return (*matrix).rows;
 }
@@ -183,14 +194,21 @@ void modifyColumn(Matrix* matrix, double value, int columnDest, int columnOrig){
 
 double det(Matrix* matrix){
     Matrix copyMatrix = copy(matrix);
-    int i, j;
+    int i, j, sign = 1;
     for(i = 1; i <= matrix->rows;  i++){
         for(j = i + 1; j <= matrix->rows; j++){
-            modifyRow(&copyMatrix, -copyMatrix.mat[j - 1][i - 1]/copyMatrix.mat[i - 1][i - 1], j, i);
+            int k = j;
+            for(k = j; k <= matrix->rows && getValue(&copyMatrix, i, i) == 0; k++){
+                swapRows(&copyMatrix, i, k);
+                sign *= -1;
+            }
+            if(k == matrix->rows + 1 && getValue(&copyMatrix, i, i) == 0)
+                return 0.;
+            modifyRow(&copyMatrix, -getValue(&copyMatrix, j, i)/getValue(&copyMatrix, i, i), j, i);
         }
     }
 
-    double det = matrixTrace(&copyMatrix);
+    double det = matrixTrace(&copyMatrix) * sign;
     free_matrix(copyMatrix);
     return det;
 }
@@ -206,4 +224,11 @@ double matrixTrace(Matrix* matrix){
     for(i = 0; i < matrix->rows; i++)
         trace *= matrix->mat[i][i];
     return trace;
+}
+
+void swapRows(Matrix* matrix, int row1, int row2){
+    row1 -= 1; row2 -= 1;
+    double* helper = matrix->mat[row1];
+    matrix->mat[row1] = matrix->mat[row2];
+    matrix->mat[row2] = helper;
 }
