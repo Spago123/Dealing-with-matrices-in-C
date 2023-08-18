@@ -13,17 +13,11 @@ int main(){
     Matrix mat5 = conVertically(&mat1, &mat2);
     Matrix mat6 = conVertically(&mat3, &mat4);
     Matrix mat7 = conVertically(&mat5, &mat6);
-    print_matrix(&mat7);
+    printMatrixPtr(&mat7);
     printf("Determinat of the matrix mat7 is : %f\n", det(&mat7));
     if(singularity(&mat7) == 1)
         printf("Mat7 is singular");
     else
         printf("Mat7 is regular");
-    free_matrix(mat1);
-    free_matrix(mat2);
-    free_matrix(mat3);
-    free_matrix(mat4);
-    free_matrix(mat5);
-    free_matrix(mat6);
-    free_matrix(mat7);
+    clearAll();
 }

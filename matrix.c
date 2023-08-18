@@ -4,9 +4,21 @@
 #include<pthread.h>
 #include<math.h>
 
+struct MatrixGarbageCollector{
+    int cnt;
+    Matrix* matrices;
+} matrixGarbageCollector = {.cnt = 0, .matrices = NULL};
+
 const double EPS = 1e-5;
 
-Matrix create_matrix(int rows, int columns){
+void addNewMatrix(Matrix matrix){
+    matrixGarbageCollector.matrices = (Matrix*)realloc(matrixGarbageCollector.matrices, (matrixGarbageCollector.cnt + 1) * sizeof(Matrix));
+    matrixGarbageCollector.matrices[matrixGarbageCollector.cnt] = matrix;
+    matrixGarbageCollector.cnt += 1;
+}
+
+
+Matrix createMatrix(int rows, int columns){
     Matrix matrix = {rows, columns, (double**)malloc(sizeof(double*)*rows)};
     int i;
     for(i = 0; i < rows; i++){
@@ -15,14 +27,28 @@ Matrix create_matrix(int rows, int columns){
         for(j = 0; j < columns; j++)
             matrix.mat[i][j] = 0.0;
     }
+    addNewMatrix(matrix);
     return matrix;
 }
 
 Matrix zeros(int rows, int columns){
-    return create_matrix(rows, columns);
+    return createMatrix(rows, columns);
 }
 
-void print_matrix(Matrix* matrix){
+Matrix ones(int n){
+    Matrix matrix = createMatrix(n, n);
+    int i;
+    for(i = 0; i < n; i++){
+        matrix.mat[i][i] = 1.;
+    }
+    return matrix;
+}
+
+void printMatrix(Matrix matrix){
+    printMatrixPtr(&matrix);
+}
+
+void printMatrixPtr(Matrix* matrix){
     int i, j;
     for(i = 0; i < (*matrix).rows; i++) {
         for(j = 0; j < (*matrix).columns; j++) {
@@ -32,15 +58,24 @@ void print_matrix(Matrix* matrix){
     }
 }
 
-void free_matrix(Matrix matrix){
+void freeMatrix(Matrix matrix){
     int i;
     for(i = 0; i < matrix.rows; i++)
         free(matrix.mat[i]);
     free(matrix.mat);
 }
 
+void clearAll(){
+    int i;
+    for(i = 0; i < matrixGarbageCollector.cnt; i++){
+        freeMatrix(matrixGarbageCollector.matrices[i]);
+    }
+    free(matrixGarbageCollector.matrices);
+    matrixGarbageCollector.cnt = 0;
+}
+
 Matrix inputMatrix(int rows, int columns){
-    Matrix matrix = create_matrix(rows, columns);
+    Matrix matrix = createMatrix(rows, columns);
     int i, j;
     for(i = 1; i <= rows; i++){
         for(j = 1; j <= columns; j++){
@@ -67,7 +102,7 @@ double* getElement(Matrix* matrix, int row, int col){
 }
 
 Matrix conHorizontally(Matrix* mat1, Matrix* mat2){
-    Matrix matrix = create_matrix(mat1->rows + mat2->rows, mat1->columns);
+    Matrix matrix = createMatrix(mat1->rows + mat2->rows, mat1->columns);
     
     pthread_t thread1, thread2;
 
@@ -84,7 +119,7 @@ Matrix conHorizontally(Matrix* mat1, Matrix* mat2){
 }
 
 Matrix conVertically(Matrix* mat1, Matrix* mat2){
-    Matrix matrix = create_matrix(mat1->rows, mat1->columns + mat2->columns);
+    Matrix matrix = createMatrix(mat1->rows, mat1->columns + mat2->columns);
 
     pthread_t thread1, thread2;
 
@@ -124,7 +159,7 @@ void* fillMatrix(void* concatAndCopy){
 
 Matrix subMatrix(Matrix* matrix, int rowBegin, int rowEnd, int colBegin, int colEnd){
     rowBegin--, rowEnd--, colBegin--, colEnd--; 
-    Matrix sub = create_matrix(rowEnd - rowBegin + 1, colEnd - colBegin + 1);
+    Matrix sub = createMatrix(rowEnd - rowBegin + 1, colEnd - colBegin + 1);
     int i, j;
     for(i = rowBegin; i <= rowEnd; i++){
         for(j = colBegin; j <= colEnd; j++){
@@ -135,7 +170,7 @@ Matrix subMatrix(Matrix* matrix, int rowBegin, int rowEnd, int colBegin, int col
 }
 
 Matrix arr2mat(double* begin, double* end){
-    Matrix matrix = create_matrix(end - begin, 1);
+    Matrix matrix = createMatrix(end - begin, 1);
     double* help = begin;
     for(; help < end; help++){
         matrix.mat[help - begin][0] = *help;
@@ -144,7 +179,7 @@ Matrix arr2mat(double* begin, double* end){
 }
 
 Matrix diag(double* begin, double* end){
-    Matrix matrix = create_matrix(end - begin, end - begin);
+    Matrix matrix = createMatrix(end - begin, end - begin);
     double* help = begin;
     for(; help < end; help++){
         matrix.mat[help - begin][help - begin] = *help;
@@ -153,7 +188,7 @@ Matrix diag(double* begin, double* end){
 }
 
 Matrix sumMatrix(Matrix* mat1, Matrix* mat2){
-    Matrix sum = create_matrix(mat1->rows, mat1->columns);
+    Matrix sum = createMatrix(mat1->rows, mat1->columns);
     int i, j;
     for(i = 0; i < sum.rows; i++){
         for(j = 0; j < sum.columns; j++){
@@ -164,7 +199,7 @@ Matrix sumMatrix(Matrix* mat1, Matrix* mat2){
 }
 
 Matrix multiplyMatrix(Matrix* mat1, Matrix* mat2){
-    Matrix product = create_matrix(mat1->rows, mat2->columns);
+    Matrix product = createMatrix(mat1->rows, mat2->columns);
     int i, j, k;
     for(i = 0; i < mat1->rows; i++){
         for(j = 0; j < mat2->columns; j++){
@@ -209,7 +244,7 @@ double det(Matrix* matrix){
     }
 
     double det = matrixTrace(&copyMatrix) * sign;
-    free_matrix(copyMatrix);
+    freeMatrix(copyMatrix);
     return det;
 }
 
@@ -231,4 +266,25 @@ void swapRows(Matrix* matrix, int row1, int row2){
     double* helper = matrix->mat[row1];
     matrix->mat[row1] = matrix->mat[row2];
     matrix->mat[row2] = helper;
+}
+
+void swapColumns(Matrix* matrix, int col1, int col2){
+    col1 -= 1; col2 -= 1;
+    int i;
+    for(i = 0; i < matrix->rows; i++){
+        double helper = matrix->mat[i][col1];
+        matrix->mat[i][col1] = matrix->mat[i][col2];
+        matrix->mat[i][col2] = helper;
+    }
+}
+
+Matrix scalarMulty(Matrix *matrix, double scalar){
+    Matrix newMatrix = createMatrix(matrix->rows, matrix->columns);
+    int i, j;
+    for(i = 1; i <= newMatrix.rows; i++){
+        for(j = 1; j <= newMatrix.columns; j++){
+            *getElement(&newMatrix, i, j) = scalar * getValue(matrix, i, j);
+        }
+    }
+    return newMatrix;
 }

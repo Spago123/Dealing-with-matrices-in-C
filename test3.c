@@ -8,7 +8,7 @@ int main(){
     printf("Type in the elements of the matrix:\n");
     Matrix matrix = inputMatrix(rows, columns);
     printf("You've typed in the following matrix\n");
-    print_matrix(&matrix);
+    printMatrixPtr(&matrix);
     printf("The determinant of your matrix is: %g", det(&matrix));
-    free_matrix(matrix);
+    clearAll();
 }

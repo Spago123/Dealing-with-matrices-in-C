@@ -25,22 +25,37 @@ void* fillMatrix(void* concatAndCopy);
     * the elements are set to zero by default
 */
 
-Matrix create_matrix(int rows, int columns);
+Matrix createMatrix(int rows, int columns);
 /*
     * Function that creates a zero matrix
 */
 Matrix zeros(int rows, int columns);
+
+/*
+    * Function that return an identity matrix
+*/
+Matrix ones(int n);
+
 /*
     * This function is used to print a matrix 
     * argument is a matrix
 */
-void print_matrix(Matrix* matrix);
+void printMatrix(Matrix matrix);
+/*
+    * This function is used to print a matrix 
+    * argument is a pointer to matrix
+*/
+void printMatrixPtr(Matrix* matrix);
 /*
     * This function is used to free the space occupied by the Matrix object
     * This function should be used for any number of Matrix object created at the end of the program
-    *
 */
-void free_matrix(Matrix matrix);
+void freeMatrix(Matrix matrix);
+
+/*
+    * Function that will erase every instance of the Matrix object ever created in the program
+*/
+void clearAll();
 
 /*
     * Function used to type in a matrix from standard user input
@@ -146,6 +161,11 @@ void swapRows(Matrix* matrix, int row1, int row2);
     * Funtion that swaps two columns of a matrix
 */
 void swapColumns(Matrix* matrix, int col1, int col2);
+
+/*
+    * Function that multiplies each element of a matrix with a scalar
+*/
+Matrix scalarMulty(Matrix *matrix, double scalar);
 
 
 #endif
