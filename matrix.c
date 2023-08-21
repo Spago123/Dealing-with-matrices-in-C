@@ -288,3 +288,65 @@ Matrix scalarMulty(Matrix *matrix, double scalar){
     }
     return newMatrix;
 }
+
+void moltiplyRow(Matrix* matrix, double value, int row){
+    row--;
+    int j;
+    for(j = 0; j < matrix->columns; j++){
+        matrix->mat[row][j] *= value;
+    }
+}
+
+Matrix inv(Matrix* matrix){
+    Matrix I = ones(matrix->rows);
+    Matrix matrixI = conVertically(matrix, &I);
+
+    int i, j;
+    for(i = 1; i <= matrixI.rows;  i++){
+        for(j = i + 1; j <= matrixI.rows; j++){
+            int k = j;
+            for(k = j; k <= matrixI.rows && getValue(&matrixI, i, i) == 0; k++){
+                swapRows(&matrixI, i, k);
+            }
+            if(k == matrixI.rows + 1 && getValue(&matrixI, i, i) == 0)
+                continue;
+            modifyRow(&matrixI, -getValue(&matrixI, j, i)/getValue(&matrixI, i, i), j, i);
+        }
+    }
+
+
+    for(i = 0; i < matrixI.rows; i++){
+        for(j = i + 1; j < matrixI.rows; j++){
+            modifyRow(&matrixI, -getValue(&matrixI, matrixI.rows - j, matrixI.rows - i)/getValue(&matrixI, matrixI.rows - i, matrixI.rows - i),
+            matrixI.rows - j, matrixI.rows - i);
+        }
+    }
+
+
+
+    for(i = 1; i <= matrixI.rows; i++){
+        moltiplyRow(&matrixI, 1/getValue(&matrixI, i, i), i);
+    }
+
+    matrixI = subMatrix(&matrixI, 1, matrix->rows, matrix->rows + 1, 2 * matrix->rows);
+    return matrixI;
+}
+
+Matrix trans(Matrix* matrix){
+    Matrix trans = createMatrix(matrix->columns, matrix->rows);
+    int i, j;
+    for(i = 0; i < matrix->rows; i++){
+        for(j = i; j < matrix->columns; j++){
+            *getElement(&trans, j + 1, i + 1) = getValue(matrix, i + 1, j + 1);
+            //*getElement(&trans, transj + 1, j + 1) = getValue(matrix, j + 1, i + 1);
+            
+        }
+    }
+
+    for(i = 0; i < matrix->columns; i++){
+        for(j = i; j < matrix->rows; j++){
+            *getElement(&trans, i + 1, j + 1) = getValue(matrix, j + 1, i + 1);
+        }
+    }
+    return trans;
+}

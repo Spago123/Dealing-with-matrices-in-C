@@ -167,5 +167,11 @@ void swapColumns(Matrix* matrix, int col1, int col2);
 */
 Matrix scalarMulty(Matrix *matrix, double scalar);
 
+/*
+    * Function that transposes a matrix
+*/
+
+Matrix trans(Matrix* matrix);
+
 
 #endif
