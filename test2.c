@@ -10,12 +10,12 @@ int main(){
     Matrix mat2 = arr2mat(arr2, arr2 + 4);
     Matrix mat3 = arr2mat(arr3, arr3 + 4);
     Matrix mat4 = arr2mat(arr4, arr4 + 4);
-    Matrix mat5 = conVertically(&mat1, &mat2);
-    Matrix mat6 = conVertically(&mat3, &mat4);
-    Matrix mat7 = conVertically(&mat5, &mat6);
-    printMatrixPtr(&mat7);
-    printf("Determinat of the matrix mat7 is : %f\n", det(&mat7));
-    if(singularity(&mat7) == 1)
+    Matrix mat5 = conVertically(mat1, mat2);
+    Matrix mat6 = conVertically(mat3, mat4);
+    Matrix mat7 = conVertically(mat5, mat6);
+    printMatrix(mat7);
+    printf("Determinat of the matrix mat7 is : %f\n", det(mat7));
+    if(singularity(mat7) == 1)
         printf("Mat7 is singular");
     else
         printf("Mat7 is regular");

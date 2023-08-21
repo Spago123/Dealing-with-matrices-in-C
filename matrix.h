@@ -69,7 +69,7 @@ int getRows(Matrix *matrix);
 /*
     * Get number of columns
 */
-int getColmns(Matrix* matrix);
+int getColumns(Matrix* matrix);
 /*
     * Get elements value, using this function you cannot modify the elements value
 */
@@ -82,12 +82,12 @@ double* getElement(Matrix* matrix, int row, int col);
     * Function that concats two matrices horizontally
     * number of columns must be the same for both matrices
 */
-Matrix conHorizontally(Matrix* mat1, Matrix* mat2);
+Matrix conHorizontally(Matrix mat1, Matrix mat2);
 /*
     * Function that conctats two matrices vertically
     * number of rows must be the same for both matrices
 */
-Matrix conVertically(Matrix* mat1, Matrix* mat2);
+Matrix conVertically(Matrix mat1, Matrix mat2);
 
 /*
     * Function that makes a deep copy of a matrix
@@ -98,7 +98,7 @@ Matrix copy(Matrix* matrix);
     * Function that makes a submatrix of a matrix
 */
 
-Matrix subMatrix(Matrix* matrix, int horBegin, int verBegin, int horEnd, int verEnd);
+Matrix subMatrix(Matrix matrix, int horBegin, int verBegin, int horEnd, int verEnd);
 
 /*
     * Function that makes a vector out of an array
@@ -114,28 +114,28 @@ Matrix diag(double* begin, double* end);
 /*
     * Function that sums two matrices   
 */
-Matrix sumMatrix(Matrix* mat1, Matrix* mat2);
+Matrix sumMatrix(Matrix mat1, Matrix mat2);
 
 /*
     * Function that multiplies two matrices
 */
-Matrix multiplyMatrix(Matrix* mat1, Matrix* mat2);
+Matrix multiplyMatrix(Matrix mat1, Matrix mat2);
 
 /*
     * Function that returns the determinant of a matrix
 */
-double det(Matrix* matrix);
+double det(Matrix matrix);
 
 /*
     * Function that returns if a matrix is singular or not
     * return 1 for singular matrix, 0 for regular matrix
 */
-int singularity(Matrix* matrix);
+int singularity(Matrix matrix);
 
 /*
     * Function that return the inverse of a matrix
 */
-Matrix inv(Matrix* matrix);
+Matrix inv(Matrix matrix);
 
 /*
     * Function to modify a rows value
@@ -150,7 +150,7 @@ void modifyColumn(Matrix* matrix, double value, int columnDest, int columnOrig);
 /*
     * Function that calculates the product of the element on the main diagonal
 */
-double matrixTrace(Matrix* matrix);
+double matrixTrace(Matrix matrix);
 
 /*
     * Function that swaps two rows of a matrix
@@ -165,13 +165,12 @@ void swapColumns(Matrix* matrix, int col1, int col2);
 /*
     * Function that multiplies each element of a matrix with a scalar
 */
-Matrix scalarMulty(Matrix *matrix, double scalar);
+Matrix scalarMulty(Matrix matrix, double scalar);
 
 /*
     * Function that transposes a matrix
 */
-
-Matrix trans(Matrix* matrix);
+Matrix trans(Matrix matrix);
 
 
 #endif

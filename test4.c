@@ -3,7 +3,7 @@
 
 int main(){
     Matrix matrix = ones(3);
-    Matrix newMatrix = scalarMulty(&matrix, 3);
-    printMatrixPtr(&newMatrix);
+    Matrix newMatrix = scalarMulty(matrix, 3);
+    printMatrix(newMatrix);
     clearAll();
 }

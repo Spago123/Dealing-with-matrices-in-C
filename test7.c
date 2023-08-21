@@ -7,6 +7,6 @@ int main(){
     scanf("%d", &n);
     Matrix matrix = inputMatrix(n, n);
     printf("Inversion of your matrix is:\n");
-    printMatrix(inv(&matrix));
+    printMatrix(inv(matrix));
     clearAll();
 }

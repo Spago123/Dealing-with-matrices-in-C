@@ -6,6 +6,6 @@ int main(){
     printf("Type in the dimensions of your matrix: ");
     scanf("%d %d", &m, &n);
     Matrix matrix = inputMatrix(m, n);
-    printMatrix(trans(&matrix));
+    printMatrix(trans(matrix));
     clearAll();
 }

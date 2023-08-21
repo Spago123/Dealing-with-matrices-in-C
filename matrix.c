@@ -52,7 +52,7 @@ void printMatrixPtr(Matrix* matrix){
     int i, j;
     for(i = 0; i < (*matrix).rows; i++) {
         for(j = 0; j < (*matrix).columns; j++) {
-            printf("%15.6f", (*matrix).mat[i][j]);
+            printf("%10.4f", (*matrix).mat[i][j]);
         }
         printf("\n");
     }
@@ -101,13 +101,13 @@ double* getElement(Matrix* matrix, int row, int col){
     return &((*matrix).mat[row - 1][col - 1]);
 }
 
-Matrix conHorizontally(Matrix* mat1, Matrix* mat2){
-    Matrix matrix = createMatrix(mat1->rows + mat2->rows, mat1->columns);
+Matrix conHorizontally(Matrix mat1, Matrix mat2){
+    Matrix matrix = createMatrix(mat1.rows + mat2.rows, mat1.columns);
     
     pthread_t thread1, thread2;
 
-    ConcatAndCopy con1 = {0, 0, &matrix, mat1};
-    ConcatAndCopy con2 = {mat1->rows, 0, &matrix, mat2};
+    ConcatAndCopy con1 = {0, 0, &matrix, &mat1};
+    ConcatAndCopy con2 = {mat1.rows, 0, &matrix, &mat2};
 
     pthread_create(&thread1, NULL, fillMatrix, (void*)(&con1));
     pthread_create(&thread2, NULL, fillMatrix, (void*)(&con2));
@@ -118,13 +118,13 @@ Matrix conHorizontally(Matrix* mat1, Matrix* mat2){
     return matrix;
 }
 
-Matrix conVertically(Matrix* mat1, Matrix* mat2){
-    Matrix matrix = createMatrix(mat1->rows, mat1->columns + mat2->columns);
+Matrix conVertically(Matrix mat1, Matrix mat2){
+    Matrix matrix = createMatrix(mat1.rows, mat1.columns + mat2.columns);
 
     pthread_t thread1, thread2;
 
-    ConcatAndCopy con1 = {0, 0, &matrix, mat1};
-    ConcatAndCopy con2 = {0, mat1->columns, &matrix, mat2};
+    ConcatAndCopy con1 = {0, 0, &matrix, &mat1};
+    ConcatAndCopy con2 = {0, mat1.columns, &matrix, &mat2};
 
     pthread_create(&thread1, NULL, fillMatrix, (void*)(&con1));
     pthread_create(&thread2, NULL, fillMatrix, (void*)(&con2));
@@ -157,13 +157,13 @@ void* fillMatrix(void* concatAndCopy){
     }
 }
 
-Matrix subMatrix(Matrix* matrix, int rowBegin, int rowEnd, int colBegin, int colEnd){
+Matrix subMatrix(Matrix matrix, int rowBegin, int rowEnd, int colBegin, int colEnd){
     rowBegin--, rowEnd--, colBegin--, colEnd--; 
     Matrix sub = createMatrix(rowEnd - rowBegin + 1, colEnd - colBegin + 1);
     int i, j;
     for(i = rowBegin; i <= rowEnd; i++){
         for(j = colBegin; j <= colEnd; j++){
-            sub.mat[i - rowBegin][j - colBegin] = matrix->mat[i][j];
+            sub.mat[i - rowBegin][j - colBegin] = matrix.mat[i][j];
         }
     } 
     return sub;
@@ -187,24 +187,24 @@ Matrix diag(double* begin, double* end){
     return matrix;
 }
 
-Matrix sumMatrix(Matrix* mat1, Matrix* mat2){
-    Matrix sum = createMatrix(mat1->rows, mat1->columns);
+Matrix sumMatrix(Matrix mat1, Matrix mat2){
+    Matrix sum = createMatrix(mat1.rows, mat1.columns);
     int i, j;
     for(i = 0; i < sum.rows; i++){
         for(j = 0; j < sum.columns; j++){
-            sum.mat[i][j] = mat1->mat[i][j] + mat2->mat[i][j];
+            sum.mat[i][j] = mat1.mat[i][j] + mat2.mat[i][j];
         }
     }
     return sum;
 }
 
-Matrix multiplyMatrix(Matrix* mat1, Matrix* mat2){
-    Matrix product = createMatrix(mat1->rows, mat2->columns);
+Matrix multiplyMatrix(Matrix mat1, Matrix mat2){
+    Matrix product = createMatrix(mat1.rows, mat2.columns);
     int i, j, k;
-    for(i = 0; i < mat1->rows; i++){
-        for(j = 0; j < mat2->columns; j++){
-            for(k = 0; k < mat1->rows; k++){
-                product.mat[i][j] += mat1->mat[i][k] * mat2->mat[k][j];
+    for(i = 0; i < mat1.rows; i++){
+        for(j = 0; j < mat2.columns; j++){
+            for(k = 0; k < mat1.rows; k++){
+                product.mat[i][j] += mat1.mat[i][k] * mat2.mat[k][j];
             }
         }
     }
@@ -227,37 +227,36 @@ void modifyColumn(Matrix* matrix, double value, int columnDest, int columnOrig){
     }
 }
 
-double det(Matrix* matrix){
-    Matrix copyMatrix = copy(matrix);
+double det(Matrix matrix){
+    Matrix copyMatrix = copy(&matrix);
     int i, j, sign = 1;
-    for(i = 1; i <= matrix->rows;  i++){
-        for(j = i + 1; j <= matrix->rows; j++){
+    for(i = 1; i <= matrix.rows;  i++){
+        for(j = i + 1; j <= matrix.rows; j++){
             int k = j;
-            for(k = j; k <= matrix->rows && getValue(&copyMatrix, i, i) == 0; k++){
+            for(k = j; k <= matrix.rows && getValue(&copyMatrix, i, i) == 0; k++){
                 swapRows(&copyMatrix, i, k);
                 sign *= -1;
             }
-            if(k == matrix->rows + 1 && getValue(&copyMatrix, i, i) == 0)
+            if(k == matrix.rows + 1 && getValue(&copyMatrix, i, i) == 0)
                 return 0.;
             modifyRow(&copyMatrix, -getValue(&copyMatrix, j, i)/getValue(&copyMatrix, i, i), j, i);
         }
     }
 
-    double det = matrixTrace(&copyMatrix) * sign;
-    freeMatrix(copyMatrix);
+    double det = matrixTrace(copyMatrix) * sign;
     return det;
 }
 
 
-int singularity(Matrix* matrix){
+int singularity(Matrix matrix){
     return (abs(det(matrix)) <= EPS) ? 1:0;
 }
 
-double matrixTrace(Matrix* matrix){
+double matrixTrace(Matrix matrix){
     double trace = 1.;
     int i;
-    for(i = 0; i < matrix->rows; i++)
-        trace *= matrix->mat[i][i];
+    for(i = 0; i < matrix.rows; i++)
+        trace *= matrix.mat[i][i];
     return trace;
 }
 
@@ -278,12 +277,12 @@ void swapColumns(Matrix* matrix, int col1, int col2){
     }
 }
 
-Matrix scalarMulty(Matrix *matrix, double scalar){
-    Matrix newMatrix = createMatrix(matrix->rows, matrix->columns);
+Matrix scalarMulty(Matrix matrix, double scalar){
+    Matrix newMatrix = createMatrix(matrix.rows, matrix.columns);
     int i, j;
     for(i = 1; i <= newMatrix.rows; i++){
         for(j = 1; j <= newMatrix.columns; j++){
-            *getElement(&newMatrix, i, j) = scalar * getValue(matrix, i, j);
+            *getElement(&newMatrix, i, j) = scalar * getValue(&matrix, i, j);
         }
     }
     return newMatrix;
@@ -297,9 +296,9 @@ void moltiplyRow(Matrix* matrix, double value, int row){
     }
 }
 
-Matrix inv(Matrix* matrix){
-    Matrix I = ones(matrix->rows);
-    Matrix matrixI = conVertically(matrix, &I);
+Matrix inv(Matrix matrix){
+    Matrix I = ones(matrix.rows);
+    Matrix matrixI = conVertically(matrix, I);
 
     int i, j;
     for(i = 1; i <= matrixI.rows;  i++){
@@ -328,24 +327,22 @@ Matrix inv(Matrix* matrix){
         moltiplyRow(&matrixI, 1/getValue(&matrixI, i, i), i);
     }
 
-    matrixI = subMatrix(&matrixI, 1, matrix->rows, matrix->rows + 1, 2 * matrix->rows);
+    matrixI = subMatrix(matrixI, 1, matrix.rows, matrix.rows + 1, 2 * matrix.rows);
     return matrixI;
 }
 
-Matrix trans(Matrix* matrix){
-    Matrix trans = createMatrix(matrix->columns, matrix->rows);
+Matrix trans(Matrix matrix){
+    Matrix trans = createMatrix(matrix.columns, matrix.rows);
     int i, j;
-    for(i = 0; i < matrix->rows; i++){
-        for(j = i; j < matrix->columns; j++){
-            *getElement(&trans, j + 1, i + 1) = getValue(matrix, i + 1, j + 1);
-            //*getElement(&trans, transj + 1, j + 1) = getValue(matrix, j + 1, i + 1);
-            
+    for(i = 0; i < matrix.rows; i++){
+        for(j = i; j < matrix.columns; j++){
+            *getElement(&trans, j + 1, i + 1) = getValue(&matrix, i + 1, j + 1);
         }
     }
 
-    for(i = 0; i < matrix->columns; i++){
-        for(j = i; j < matrix->rows; j++){
-            *getElement(&trans, i + 1, j + 1) = getValue(matrix, j + 1, i + 1);
+    for(i = 0; i < matrix.columns; i++){
+        for(j = i; j < matrix.rows; j++){
+            *getElement(&trans, i + 1, j + 1) = getValue(&matrix, j + 1, i + 1);
         }
     }
     return trans;
