@@ -41,16 +41,6 @@ Matrix ones(int n);
     * argument is a matrix
 */
 void printMatrix(Matrix matrix);
-/*
-    * This function is used to print a matrix 
-    * argument is a pointer to matrix
-*/
-void printMatrixPtr(Matrix* matrix);
-/*
-    * This function is used to free the space occupied by the Matrix object
-    * This function should be used for any number of Matrix object created at the end of the program
-*/
-void freeMatrix(Matrix matrix);
 
 /*
     * Function that will erase every instance of the Matrix object ever created in the program
@@ -171,6 +161,16 @@ Matrix scalarMulty(Matrix matrix, double scalar);
     * Function that transposes a matrix
 */
 Matrix trans(Matrix matrix);
+
+/*
+    * Function that squares a matrix
+*/
+Matrix square(Matrix matrix);
+
+/*
+    * Function that exponents a matrix
+*/
+Matrix powMatrix(Matrix matrix, int degree);
 
 
 #endif

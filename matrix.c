@@ -11,6 +11,13 @@ struct MatrixGarbageCollector{
 
 const double EPS = 1e-5;
 
+
+void beforeExit(char* error){
+    printf("\n%s\n", error);
+    clearAll();
+    exit(0);
+}
+
 void addNewMatrix(Matrix matrix){
     matrixGarbageCollector.matrices = (Matrix*)realloc(matrixGarbageCollector.matrices, (matrixGarbageCollector.cnt + 1) * sizeof(Matrix));
     matrixGarbageCollector.matrices[matrixGarbageCollector.cnt] = matrix;
@@ -19,6 +26,9 @@ void addNewMatrix(Matrix matrix){
 
 
 Matrix createMatrix(int rows, int columns){
+    if(rows <= 0 || columns <= 0){
+        beforeExit("ERROR: The matrix dimensions are not valid.");
+    }
     Matrix matrix = {rows, columns, (double**)malloc(sizeof(double*)*rows)};
     int i;
     for(i = 0; i < rows; i++){
@@ -44,15 +54,12 @@ Matrix ones(int n){
     return matrix;
 }
 
-void printMatrix(Matrix matrix){
-    printMatrixPtr(&matrix);
-}
 
-void printMatrixPtr(Matrix* matrix){
+void printMatrix(Matrix matrix){
     int i, j;
-    for(i = 0; i < (*matrix).rows; i++) {
-        for(j = 0; j < (*matrix).columns; j++) {
-            printf("%10.4f", (*matrix).mat[i][j]);
+    for(i = 0; i < matrix.rows; i++) {
+        for(j = 0; j < matrix.columns; j++) {
+            printf("%15.4f", matrix.mat[i][j]);
         }
         printf("\n");
     }
@@ -86,22 +93,25 @@ Matrix inputMatrix(int rows, int columns){
 }
 
 int getRows(Matrix *matrix){
-    return (*matrix).rows;
+    return matrix->rows;
 }
 
 int getColumns(Matrix *matrix){
-    return (*matrix).columns;
+    return matrix->columns;
 }
 
 double getValue(Matrix* matrix, int row, int col){
-    return (*matrix).mat[row - 1][col - 1];
+    return matrix->mat[row - 1][col - 1];
 }
 
 double* getElement(Matrix* matrix, int row, int col){
-    return &((*matrix).mat[row - 1][col - 1]);
+    return &(matrix->mat[row - 1][col - 1]);
 }
 
 Matrix conHorizontally(Matrix mat1, Matrix mat2){
+    if(mat1.columns != mat2.columns){
+        beforeExit("ERROR: The matrices are not compatible for horizontal concatenation.");
+    }
     Matrix matrix = createMatrix(mat1.rows + mat2.rows, mat1.columns);
     
     pthread_t thread1, thread2;
@@ -119,6 +129,9 @@ Matrix conHorizontally(Matrix mat1, Matrix mat2){
 }
 
 Matrix conVertically(Matrix mat1, Matrix mat2){
+    if(mat1.rows != mat2.rows){
+        beforeExit("ERROR: The matrices are not compatible for vertical concatenation.");
+    }    
     Matrix matrix = createMatrix(mat1.rows, mat1.columns + mat2.columns);
 
     pthread_t thread1, thread2;
@@ -158,6 +171,12 @@ void* fillMatrix(void* concatAndCopy){
 }
 
 Matrix subMatrix(Matrix matrix, int rowBegin, int rowEnd, int colBegin, int colEnd){
+    if((rowBegin < 1 || rowBegin > rowEnd || rowBegin > matrix.rows) 
+        || (rowEnd < 1 || rowEnd > matrix.rows)
+        || (colBegin < 1 || colBegin > colEnd || colBegin > matrix.columns)
+        || (colEnd < 1 || colEnd > matrix.columns)){
+            beforeExit("ERROR: The parametars for subMatrix function are not valid.");
+        }
     rowBegin--, rowEnd--, colBegin--, colEnd--; 
     Matrix sub = createMatrix(rowEnd - rowBegin + 1, colEnd - colBegin + 1);
     int i, j;
@@ -188,6 +207,9 @@ Matrix diag(double* begin, double* end){
 }
 
 Matrix sumMatrix(Matrix mat1, Matrix mat2){
+    if(mat1.rows != mat2.rows || mat1.columns != mat2.columns){
+        beforeExit("ERROR: The matrices are not compatible for summation.");
+    }
     Matrix sum = createMatrix(mat1.rows, mat1.columns);
     int i, j;
     for(i = 0; i < sum.rows; i++){
@@ -199,6 +221,9 @@ Matrix sumMatrix(Matrix mat1, Matrix mat2){
 }
 
 Matrix multiplyMatrix(Matrix mat1, Matrix mat2){
+    if(mat1.columns != mat2.rows){
+        beforeExit("ERROR: The matrices are not compatible for multiplication.");
+    }
     Matrix product = createMatrix(mat1.rows, mat2.columns);
     int i, j, k;
     for(i = 0; i < mat1.rows; i++){
@@ -288,7 +313,7 @@ Matrix scalarMulty(Matrix matrix, double scalar){
     return newMatrix;
 }
 
-void moltiplyRow(Matrix* matrix, double value, int row){
+void multiplyRow(Matrix* matrix, double value, int row){
     row--;
     int j;
     for(j = 0; j < matrix->columns; j++){
@@ -307,8 +332,9 @@ Matrix inv(Matrix matrix){
             for(k = j; k <= matrixI.rows && getValue(&matrixI, i, i) == 0; k++){
                 swapRows(&matrixI, i, k);
             }
-            if(k == matrixI.rows + 1 && getValue(&matrixI, i, i) == 0)
-                continue;
+            if(k == matrixI.rows + 1 && getValue(&matrixI, i, i) == 0) {
+                beforeExit("ERROR: The matrix is singular.");
+            }
             modifyRow(&matrixI, -getValue(&matrixI, j, i)/getValue(&matrixI, i, i), j, i);
         }
     }
@@ -324,7 +350,7 @@ Matrix inv(Matrix matrix){
 
 
     for(i = 1; i <= matrixI.rows; i++){
-        moltiplyRow(&matrixI, 1/getValue(&matrixI, i, i), i);
+        multiplyRow(&matrixI, 1/getValue(&matrixI, i, i), i);
     }
 
     matrixI = subMatrix(matrixI, 1, matrix.rows, matrix.rows + 1, 2 * matrix.rows);
@@ -335,15 +361,31 @@ Matrix trans(Matrix matrix){
     Matrix trans = createMatrix(matrix.columns, matrix.rows);
     int i, j;
     for(i = 0; i < matrix.rows; i++){
-        for(j = i; j < matrix.columns; j++){
+        for(j = 0; j < matrix.columns; j++){
             *getElement(&trans, j + 1, i + 1) = getValue(&matrix, i + 1, j + 1);
         }
     }
-
-    for(i = 0; i < matrix.columns; i++){
-        for(j = i; j < matrix.rows; j++){
-            *getElement(&trans, i + 1, j + 1) = getValue(&matrix, j + 1, i + 1);
-        }
-    }
     return trans;
+}
+
+Matrix square(Matrix matrix){
+    return multiplyMatrix(matrix, matrix);
+}
+
+Matrix powMatrix(Matrix matrix, int degree){
+    if(degree < 1){
+        beforeExit("ERROR: The exponent must by number grether than 0.");
+    }
+    if(degree == 1){
+        return copy(&matrix);
+    }
+    Matrix modification = ones(matrix.rows);
+
+
+    Matrix result = ones(matrix.rows);
+    for(; degree > 0; degree--){
+        result = multiplyMatrix(result, matrix);
+    }
+
+    return result;
 }
