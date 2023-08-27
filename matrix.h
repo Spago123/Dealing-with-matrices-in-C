@@ -172,5 +172,6 @@ Matrix square(Matrix matrix);
 */
 Matrix powMatrix(Matrix matrix, int degree);
 
+int equalsMatrix(Matrix mat1, Matrix mat2);
 
 #endif

@@ -389,3 +389,18 @@ Matrix powMatrix(Matrix matrix, int degree){
 
     return result;
 }
+
+int equalsMatrix(Matrix mat1, Matrix mat2){
+    if(mat1.rows != mat2.rows || mat1.columns != mat2.columns){
+        return 0;
+    }
+    int i, j;
+    for(i = 0; i < mat1.rows; i++){
+        for(j = 0; j < mat1.columns; j++){
+            if(mat1.mat[i][j] != mat2.mat[i][j]){
+                return 0;
+            }
+        }
+    }
+    return 1;
+}
