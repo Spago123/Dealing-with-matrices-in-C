@@ -92,6 +92,17 @@ Matrix inputMatrix(int rows, int columns){
     return matrix;
 }
 
+Matrix initMatrix(int rows, int columns, double elements[rows][columns]){
+    Matrix matrix = createMatrix(rows, columns);
+    int i, j;
+    for(i = 0; i < rows; i++){
+        for(j = 0; j < columns; j++){
+            matrix.mat[i][j] = elements[i][j];
+        }
+    }
+    return matrix;
+}
+
 int getRows(Matrix *matrix){
     return matrix->rows;
 }

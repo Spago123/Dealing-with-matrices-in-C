@@ -51,6 +51,11 @@ void clearAll();
     * Function used to type in a matrix from standard user input
 */
 Matrix inputMatrix(int rows, int columns);
+
+/*
+    * Function that initializes a matrix with the elements that are given as the first argument
+*/
+Matrix initMatrix(int rows, int columns, double elements[rows][columns]);
 /*
     * Get number of rows
 */
@@ -172,6 +177,10 @@ Matrix square(Matrix matrix);
 */
 Matrix powMatrix(Matrix matrix, int degree);
 
+/*
+    * Function that checks if two matrices are equal
+*/
 int equalsMatrix(Matrix mat1, Matrix mat2);
+
 
 #endif
