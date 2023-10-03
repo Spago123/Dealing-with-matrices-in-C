@@ -55,7 +55,7 @@ Matrix inputMatrix(int rows, int columns);
 /*
     * Function that initializes a matrix with the elements that are given as the first argument
 */
-Matrix initMatrix(int rows, int columns, double elements[rows][columns]);
+Matrix initMatrix(int rows, int columns, ...);
 /*
     * Get number of rows
 */

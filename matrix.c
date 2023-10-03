@@ -3,6 +3,7 @@
 #include<stdlib.h>
 #include<pthread.h>
 #include<math.h>
+#include<stdarg.h>
 
 struct MatrixGarbageCollector{
     int cnt;
@@ -92,12 +93,15 @@ Matrix inputMatrix(int rows, int columns){
     return matrix;
 }
 
-Matrix initMatrix(int rows, int columns, double elements[rows][columns]){
+Matrix initMatrix(int rows, int columns, ...){
     Matrix matrix = createMatrix(rows, columns);
+    va_list args;
+    va_start(args, columns);
+
     int i, j;
     for(i = 0; i < rows; i++){
         for(j = 0; j < columns; j++){
-            matrix.mat[i][j] = elements[i][j];
+            matrix.mat[i][j] = va_arg(args, double);
         }
     }
     return matrix;
