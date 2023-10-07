@@ -101,7 +101,7 @@ Matrix initMatrix(int rows, int columns, ...){
     int i, j;
     for(i = 0; i < rows; i++){
         for(j = 0; j < columns; j++){
-            matrix.mat[i][j] = va_arg(args, double);
+            matrix.mat[i][j] = va_arg(args, double);;
         }
     }
     return matrix;
